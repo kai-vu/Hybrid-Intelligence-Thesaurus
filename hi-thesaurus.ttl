@@ -2,7 +2,7 @@
 @prefix dc:         <http://purl.org/dc/elements/1.1/> .
 @prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 @prefix foaf:       <http://xmlns.com/foaf/0.1/> .
-@prefix hint:       <https://w3id.org/hi-thesaurus/> .
+@prefix hint:       <https://w3id.org/hi-thesaurus#> .
 @prefix vann:       <http://purl.org/vocab/vann/> .
 @prefix skos:       <http://www.w3.org/2004/02/skos/core#> .
 @prefix schema:     <http://schema.org/> .
@@ -40,7 +40,7 @@ hint:HIScheme a skos:ConceptScheme ;
     dc:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:created "2025-11-15"^^xsd:date ;
     vann:preferredNamespacePrefix "hint";
-    vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus/" ;
+    vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" ;
     skos:prefLabel "Hybrid INtelligence Thesaurus"@en ;
     skos:hasTopConcept hint:UseCase ,
                         hint:Domain ,
