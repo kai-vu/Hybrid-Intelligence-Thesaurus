@@ -1,6 +1,5 @@
 @prefix hi:         <https://w3id.org/hi-ontology#> .
 @prefix dc:         <http://purl.org/dc/elements/1.1/> .
-@prefix dct:        <http://purl.org/dc/terms/> .
 @prefix foaf:       <http://xmlns.com/foaf/0.1/> .
 @prefix hint:       <https://w3id.org/hi-thesaurus#> .
 @prefix vann:       <http://purl.org/vocab/vann/> .
@@ -10,8 +9,8 @@
 
 
 hint:HIScheme a skos:ConceptScheme ;
-    dct:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
-    dct:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
+    dc:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
+    dc:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
     dc:creator [
         a foaf:Person ;
         foaf:name "Francesca Urgese" ;
@@ -37,7 +36,7 @@ hint:HIScheme a skos:ConceptScheme ;
             schema:value "0000-0001-7116-9338" ;
             foaf:member _:org  
         ]] ;
-    dct:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dc:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:created "2025-11-15"^^xsd:date ;
     vann:preferredNamespacePrefix "hint";
     vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" ;
