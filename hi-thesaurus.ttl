@@ -10,56 +10,42 @@
 
 
 hint:HIScheme a skos:ConceptScheme ;
-    dc:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
-    dc:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
-    dc:creator [
-        a foaf:Person ;
-        foaf:name "Francesca Urgese" ;
-        schema:identifier [
-            a schema:PropertyValue ;
-            schema:propertyID "ORCID" ;
-            schema:value "0009-0009-0516-1800";
-            foaf:member _:org  
-        ]], [
-        a foaf:Person ;
-        foaf:name "Margherita Martorana" ;
-        schema:identifier [
-            a schema:PropertyValue ;
-            schema:propertyID "ORCID" ;
-            schema:value "0000-0001-8004-0464" ;
-            foaf:member _:org  
-        ]] , [
-        a foaf:Person ;
-        foaf:name "Ilaria Tiddi" ;
-        schema:identifier [
-            a schema:PropertyValue ;
-            schema:propertyID "ORCID" ;
-            schema:value "0000-0001-7116-9338" ;
-            foaf:member _:org  
-        ]] ;
-    dc:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dct:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
+    dct:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
+    dc:creator "to be added" ;
+    # [
+    #     a foaf:Person ;
+    #     foaf:name "Francesca Urgese" ;
+    #     schema:identifier [
+    #         a schema:PropertyValue ;
+    #         schema:propertyID "ORCID" ;
+    #         schema:value "0009-0009-0516-1800";
+    #         foaf:member _:org  
+    #     ]], [
+    #     a foaf:Person ;
+    #     foaf:name "Margherita Martorana" ;
+    #     schema:identifier [
+    #         a schema:PropertyValue ;
+    #         schema:propertyID "ORCID" ;
+    #         schema:value "0000-0001-8004-0464" ;
+    #         foaf:member _:org  
+    #     ]] , [
+    #     a foaf:Person ;
+    #     foaf:name "Ilaria Tiddi" ;
+    #     schema:identifier [
+    #         a schema:PropertyValue ;
+    #         schema:propertyID "ORCID" ;
+    #         schema:value "0000-0001-7116-9338" ;
+    #         foaf:member _:org  
+    #     ]] ;
+    dct:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:created "2025-11-15"^^xsd:date ;
     vann:preferredNamespacePrefix "hint";
-    vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus/" ;
+    vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" ;
     skos:prefLabel "Hybrid INtelligence Thesaurus"@en ;
-    skos:hasTopConcept hint:UseCase ,
-                        hint:Domain ,
-                        hint:Goal ,
-                        hint:Context ,
-                        hint:Constraint ,
-                        hint:Role ,
-                        hint:Agent ,
-                        hint:Capability ,
-                        hint:Task ,
-                        hint:Method ,
-                        hint:TaskExecution ,
-                        hint:Interaction ,
-                        hint:Phenomenon ,
-                        hint:Bias ,
-                        hint:Feedback ,
-                        hint:Experiment ,
-                        hint:Evaluation ,
-                        hint:Metric .
+    skos:hasTopConcept ct:Sensing ,
+                       ct:Reasoning ,
+                       ct:Explaining .
 
 _:org a schema:Organization ;
     schema:name "Knowledge in AI (KAI) Group - Vrije Universiteit Amsterdam" .
@@ -126,7 +112,8 @@ hint:VirtualMuseumGuideUseCase a skos:Concept ;
 hint:Domain a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Domain"@en ;
-    skos:definition "A specific field or area of application where Hybrid Intelligence systems are utilized."@en .
+    skos:definition "A specific field or area of application where Hybrid Intelligence systems are utilized."@en ;
+    skos:exactMatch hi:Domain .
 
 hint:HealthAndLifestyleDomain a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -286,6 +273,7 @@ hint:Constraint a skos:Concept ;
     skos:prefLabel "Constraint"@en ;
     skos:definition "A limitation or restriction that influences the operation of a Hybrid Intelligence system."@en .
 
+
 # Ethical constraint
 ############################################################
 
@@ -358,7 +346,8 @@ hint:AccessibilityConstraint a skos:Concept ;
 hint:Role a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Role"@en ;
-    skos:definition "A specific function or position that an agent assumes within a Hybrid Intelligence system."@en .
+    skos:definition "A specific function or position that an agent assumes within a Hybrid Intelligence system."@en ;
+    skos:exactMatch hi:Role .
 
 hint:AIAssistantRole a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -819,7 +808,8 @@ hint:QuestionAnsweringTask a skos:Concept ;
 hint:Method a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Method"@en ;
-    skos:definition "A specific approach or technique used by a Hybrid Intelligence system to perform tasks."@en .
+    skos:definition "A specific approach or technique used by a Hybrid Intelligence system to perform tasks."@en ;
+    skos:exactMatch hi:Method .
 
 hint:ArgumentationReasoningMethod a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -1071,6 +1061,9 @@ hint:Interaction a skos:Concept ;
     skos:definition "The process of communication or engagement between agents within a Hybrid Intelligence system."@en ;
     skos:exactMatch hi:Interaction .
 	
+	
+
+
 # Interaction Intent
 ############################################################
 
@@ -1160,134 +1153,145 @@ hint:VoiceChatModality a skos:Concept ;
 
 
 ############################################################
-# Phenomenon Terms
+# Phenomena Terms
 ############################################################
 
 hint:Phenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Phenomenon"@en ;
-    skos:definition "An observable event or occurrence within the context of Hybrid Intelligence systems."@en .
+    skos:definition "An observable event, condition, or effect occurring within a Hybrid Intelligence ecosystem."@en .
 
-hint:SensorNoisePhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Sensor Noise Phenomenon"@en ;
-    skos:definition "A phenomenon characterized by random variations or disturbances in sensor data."@en ;
-    skos:broader hint:Phenomenon .
+### System-level
+hint:SystemPhenomenon a skos:Concept ;
+    skos:prefLabel "System Phenomenon"@en ;
+    skos:broader hint:Phenomenon ;
+    skos:definition "A phenomenon that originates from system dynamics, environmental conditions, or properties of the data used within the HI system."@en .
 
-hint:DataMismatchPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Data Mismatch Phenomenon"@en ;
-    skos:definition "A phenomenon where there is a discrepancy or inconsistency between different data sources."@en ;
-    skos:broader hint:Phenomenon .
+### Agent-level
+hint:AgentRelatedPhenomenon a skos:Concept ;
+    skos:prefLabel "Agent-Related Phenomenon"@en ;
+    skos:broader hint:Phenomenon ;
+    skos:definition "A phenomenon arising from the cognitive, perceptual, inferential, or decision-making processes of human or artificial agents."@en .
+
+### Interaction-level (includes feedback)
+hint:InteractionPhenomenon a skos:Concept ;
+    skos:prefLabel "Interaction Phenomenon"@en ;
+    skos:broader hint:Phenomenon ;
+    skos:definition "A phenomenon emerging from communication, coordination, negotiation, or feedback exchanges between agents."@en .
+
+
+############################################################
+# Agent-related Phenomena Terms
+############################################################
 
 hint:TrustShiftPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Trust Shift Phenomenon"@en ;
-    skos:definition "A phenomenon involving changes in trust levels towards Hybrid Intelligence systems."@en ;
-    skos:broader hint:Phenomenon .
-
-hint:RiskExposurePhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Risk Exposure Phenomenon"@en ;
-    skos:definition "A phenomenon where agents are exposed to potential risks within the Hybrid Intelligence system."@en ;
-    skos:broader hint:Phenomenon .
-
-hint:SkillsComplementarityPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Skills Complementarity Phenomenon"@en ;
-    skos:definition "A phenomenon where the skills of different agents complement each other within the Hybrid Intelligence system."@en ;
-    skos:broader hint:Phenomenon .
-
-hint:GroupThinkingPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Group Thinking Phenomenon"@en ;
-    skos:definition "A phenomenon where group dynamics influence the thinking and decision-making processes of agents."@en ;
-    skos:broader hint:Phenomenon .
+    skos:definition "A change in the level of trust that a human or artificial agent has toward another agent or system, often influenced by transparency, performance, or explanation quality."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
 hint:KnowledgeMismatchPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Knowledge Mismatch Phenomenon"@en ;
-    skos:definition "A phenomenon where there is a discrepancy or inconsistency between the knowledge possessed by different agents or systems."@en ;
-    skos:broader hint:Phenomenon .
+    skos:definition "A discrepancy between the knowledge assumed by an agent and the actual knowledge possessed by another agent, leading to misunderstanding or misalignment."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
 hint:DiagnosisAnchoringPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Diagnosis Anchoring Phenomenon"@en ;
-    skos:definition "A phenomenon where there is a diagnosis to be anchored."@en ;
-    skos:broader hint:Phenomenon .
-
-hint:LoadVariabilityPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Load Variability Phenomenon"@en ;
-    skos:definition "A phenomenon where there is a load variability."@en ;
-    skos:broader hint:Phenomenon .
-
-hint:CooperativeLearningDynamicsPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
-    skos:prefLabel "Cooperative Learning Dynamics Phenomenon"@en ;
-    skos:definition "A phenomenon where there are cooperative learning dynamics."@en ;
-    skos:broader hint:Phenomenon .
+    skos:definition "A phenomenon in which an agent prematurely fixates on an initial hypothesis or diagnosis, influencing subsequent reasoning."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
 hint:EngagementShiftPhenomenon a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Engagement Shift Phenomenon"@en ;
-    skos:definition "A phenomenon where there is engagement shift."@en ;
-    skos:broader hint:Phenomenon .
+    skos:definition "A variation in a human agent’s level of engagement due to changes in relevance, adaptivity, challenge, or quality of AI support."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
+hint:RiskExposurePhenomenon a skos:Concept ;
+    skos:prefLabel "Risk Exposure Phenomenon"@en ;
+    skos:definition "A phenomenon in which an agent becomes exposed to potential physical, cognitive, or ethical risks during task performance or system interaction."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
-############################################################
-# Bias Terms
-############################################################
+hint:SkillsComplementarityPhenomenon a skos:Concept ;
+    skos:prefLabel "Skills Complementarity Phenomenon"@en ;
+    skos:definition "A phenomenon where agents compensate for each other’s limitations by contributing complementary skills, improving joint performance."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
+### Bias and sub-biases
 hint:Bias a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Bias"@en ;
-    skos:definition "A systematic deviation or prejudice that affects the performance or behavior of Hybrid Intelligence systems."@en .
+    skos:definition "A systematic deviation in judgment or decision-making arising from cognitive shortcuts or structural tendencies in human or artificial agents."@en ;
+    skos:broader hint:AgentRelatedPhenomenon .
 
 hint:ConfirmationBias a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Confirmation Bias"@en ;
-    skos:definition "A bias where agents favor information that confirms their preexisting beliefs or hypotheses."@en ;
+    skos:definition "A bias in which an agent favors information that confirms preexisting beliefs while discounting contradictory evidence."@en ;
     skos:broader hint:Bias .
 
 
 ############################################################
-# Feedback Terms
+# System Phenomena Terms 
+############################################################
+
+hint:SensorNoisePhenomenon a skos:Concept ;
+    skos:prefLabel "Sensor Noise Phenomenon"@en ;
+    skos:definition "A phenomenon resulting from random fluctuations or distortions in sensor readings, affecting perception or inference."@en ;
+    skos:broader hint:SystemPhenomenon .
+
+hint:DataMismatchPhenomenon a skos:Concept ;
+    skos:prefLabel "Data Mismatch Phenomenon"@en ;
+    skos:definition "A phenomenon where heterogeneous or conflicting data sources lead to inconsistencies in system interpretation or decision-making."@en ;
+    skos:broader hint:SystemPhenomenon .
+
+hint:LoadVariabilityPhenomenon a skos:Concept ;
+    skos:prefLabel "Load Variability Phenomenon"@en ;
+    skos:definition "Fluctuations in workload, energy demand, or system usage that impact prediction, allocation, or scheduling processes."@en ;
+    skos:broader hint:SystemPhenomenon .
+
+
+############################################################
+# Interaction Phenomena Terms
+############################################################
+
+hint:GroupThinkingPhenomenon a skos:Concept ;
+    skos:prefLabel "Group Thinking Phenomenon"@en ;
+    skos:definition "A phenomenon where group dynamics push agents toward consensus without sufficient critical evaluation."@en ;
+    skos:broader hint:InteractionPhenomenon .
+
+hint:CooperativeLearningDynamicsPhenomenon a skos:Concept ;
+    skos:prefLabel "Cooperative Learning Dynamics Phenomenon"@en ;
+    skos:definition "A phenomenon where agents iteratively improve their internal models through shared observations and mutual influence."@en ;
+    skos:broader hint:InteractionPhenomenon .
+
+
+############################################################
+# Feedback Terms (interaction phenomena)
 ############################################################
 
 hint:Feedback a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Feedback"@en ;
-    skos:definition "Information provided by users or systems that reflects their experiences or evaluations of Hybrid Intelligence systems."@en .
+    skos:definition "Information exchanged between agents that reflects performance, intent, understanding, or preferences, shaping future interaction."@en ;
+    skos:broader hint:InteractionPhenomenon .
 
 hint:TrustReportFeedback a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Trust Report Feedback"@en ;
-    skos:definition "Feedback related to user trust in Hybrid Intelligence systems."@en ;
+    skos:definition "Feedback in which agents explicitly express their trust or mistrust toward another agent or system."@en ;
     skos:broader hint:Feedback .
 
 hint:ExplanationMessageFeedback a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Explanation Message Feedback"@en ;
-    skos:definition "Feedback regarding the quality and effectiveness of explanation messages provided by Hybrid Intelligence systems."@en ;
+    skos:definition "Feedback assessing the clarity, usefulness, or comprehensibility of explanation messages."@en ;
     skos:broader hint:Feedback .
 
 hint:InterventionRationaleFeedback a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Intervention Rationale Feedback"@en ;
-    skos:definition "Feedback concerning the rationale behind interventions made by Hybrid Intelligence systems."@en ;
+    skos:definition "Feedback concerning the perceived validity or adequacy of the reasons behind an AI or human intervention."@en ;
     skos:broader hint:Feedback .
 
 hint:RecommendationRationaleFeedback a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Recommendation Rationale Feedback"@en ;
-    skos:prefLabel "Feedback concerning the rational behind a recommendation."@en ;
+    skos:definition "Feedback addressing how understandable, persuasive, or appropriate the rationale of a recommendation is."@en ;
     skos:broader hint:Feedback .
 
 hint:AllocationRationaleFeedback a skos:Concept ;
-    skos:inScheme hint:HIScheme ;
     skos:prefLabel "Allocation Rationale Feedback"@en ;
-    skos:definition "Feedback concerning an allocation rationale."@en ;
+    skos:definition "Feedback on whether a resource or energy allocation decision appears fair, well justified, or appropriate."@en ;
     skos:broader hint:Feedback .
 
 
@@ -1444,6 +1448,7 @@ hint:RLExplanationClarityEvaluation a skos:Concept ;
 	skos:definition "Evaluation of explanation quality during reinforcement-learning-based actions."@en ;
 	skos:broader hint:Evaluation .
 	 
+
 hint:FineManipulationEvaluation a skos:Concept ;
 	skos:inScheme hint:HIScheme ;
 	skos:broader hint:Evaluation ;
@@ -1464,7 +1469,8 @@ hint:KGQueryAccuracyEvaluation a skos:Concept ;
 hint:Metric a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Metric"@en ;
-    skos:definition "A quantitative measure used to evaluate specific aspects of Hybrid Intelligence systems."@en .
+    skos:definition "A quantitative measure used to evaluate specific aspects of Hybrid Intelligence systems."@en ;
+    skos:exactMatch hi:Metric .
 
 hint:TrustPreservationMetric a skos:Concept ;
     skos:inScheme hint:HIScheme ;
