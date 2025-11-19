@@ -64,7 +64,7 @@ Within this scheme, concepts are organised in groups such as:
 The thesaurus uses the following namespaces:
 
 ```text
-Thesaurus namespace:  https://w3id.org/hi-thesaurus#
+Thesaurus namespace:  https://w3id.org/hi-thesaurus/
 Preferred prefix:      hint
 
 Ontology namespace:    https://w3id.org/hi-ontology#
@@ -83,7 +83,7 @@ hint:HIScheme a skos:ConceptScheme ;
     dct:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
     skos:prefLabel "Hybrid INtelligence Thesaurus"@en ;
     vann:preferredNamespacePrefix "hint" ;
-    vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" .
+    vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus/" .
 ```
 
 ---
