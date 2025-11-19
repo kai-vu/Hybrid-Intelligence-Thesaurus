@@ -107,6 +107,13 @@
     .error {
       color: #b91c1c;
     }
+    .concept-link {
+      cursor: pointer;
+      text-decoration: underline;
+      color: #2563eb;
+      font-size: 0.9rem;
+      margin-right: 0.35rem;
+    }
     @media (max-width: 800px) {
       body {
         flex-direction: column;
@@ -162,6 +169,7 @@
       const detailsEl = document.getElementById("details");
 
       const concepts = {}; // iri -> { iri, labels: [], defs: [], broader: [], narrower: [], isConcept: bool }
+      const conceptNodes = {}; // iri -> span in tree
       let activeNodeEl = null;
 
       function ensureConcept(iri) {
@@ -182,6 +190,25 @@
         const c = concepts[iri];
         if (!c) return iri;
         return c.labels[0] || iri.split("#").slice(-1)[0] || iri;
+      }
+
+      function showConcept(iri) {
+        const concept = concepts[iri];
+        if (!concept) return;
+
+        // highlight in tree if present
+        if (activeNodeEl) {
+          activeNodeEl.classList.remove("active");
+        }
+        const node = conceptNodes[iri];
+        if (node) {
+          node.classList.add("active");
+          activeNodeEl = node;
+        } else {
+          activeNodeEl = null;
+        }
+
+        renderDetails(concept);
       }
 
       function renderDetails(concept) {
@@ -209,15 +236,47 @@
 
           if (concept.broader.length > 0) {
             const b = document.createElement("div");
-            b.innerHTML = "<span class='badge'>broader</span>" +
-              concept.broader.map(iriToLabel).join(", ");
+
+            const badge = document.createElement("span");
+            badge.className = "badge";
+            badge.textContent = "broader";
+            b.appendChild(badge);
+
+            concept.broader.forEach(iri => {
+              const link = document.createElement("a");
+              link.href = "#";
+              link.className = "concept-link";
+              link.textContent = iriToLabel(iri);
+              link.addEventListener("click", (e) => {
+                e.preventDefault();
+                showConcept(iri);
+              });
+              b.appendChild(link);
+            });
+
             relDiv.appendChild(b);
           }
 
           if (concept.narrower.length > 0) {
             const n = document.createElement("div");
-            n.innerHTML = "<span class='badge'>narrower</span>" +
-              concept.narrower.map(iriToLabel).join(", ");
+
+            const badge = document.createElement("span");
+            badge.className = "badge";
+            badge.textContent = "narrower";
+            n.appendChild(badge);
+
+            concept.narrower.forEach(iri => {
+              const link = document.createElement("a");
+              link.href = "#";
+              link.className = "concept-link";
+              link.textContent = iriToLabel(iri);
+              link.addEventListener("click", (e) => {
+                e.preventDefault();
+                showConcept(iri);
+              });
+              n.appendChild(link);
+            });
+
             relDiv.appendChild(n);
           }
 
@@ -232,11 +291,11 @@
         span.className = "concept-node";
         span.textContent = concept.labels[0] || concept.iri.split("#").slice(-1)[0];
 
+        // store reference for highlighting from details pane
+        conceptNodes[concept.iri] = span;
+
         span.addEventListener("click", () => {
-          if (activeNodeEl) activeNodeEl.classList.remove("active");
-          span.classList.add("active");
-          activeNodeEl = span;
-          renderDetails(concept);
+          showConcept(concept.iri);
         });
 
         li.appendChild(span);
