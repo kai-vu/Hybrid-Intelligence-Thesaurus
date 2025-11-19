@@ -29,6 +29,19 @@
     header a {
       color: #93c5fd;
       text-decoration: none;
+      font-size: 0.85rem;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .header-separator {
+      color: #6b7280;
+      font-size: 0.8rem;
     }
     main {
       margin-top: 3rem;
@@ -100,19 +113,24 @@
       color: #374151;
       margin-right: 0.25rem;
     }
+    .rel-row {
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+    }
+    .rel-link {
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+    }
+    .rel-link:hover {
+      text-decoration-style: solid;
+    }
     .loading, .error {
       font-size: 0.9rem;
       color: #6b7280;
     }
     .error {
       color: #b91c1c;
-    }
-    .concept-link {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #2563eb;
-      font-size: 0.9rem;
-      margin-right: 0.35rem;
     }
     @media (max-width: 800px) {
       body {
@@ -138,8 +156,15 @@
     <div>
       <strong>Hybrid INtelligence Thesaurus (HINT)</strong>
     </div>
-    <div>
-      <a href="https://w3id.org/hi-thesaurus#" target="_blank" rel="noopener">Thesaurus URI</a>
+    <div class="header-links">
+      <a href="https://w3id.org/hi-thesaurus/" target="_blank" rel="noopener">Thesaurus URI</a>
+      <span class="header-separator">·</span>
+      <a href="https://raw.githubusercontent.com/kai-vu/Hybrid-Intelligence-Thesaurus/main/hi-thesaurus.ttl"
+         target="_blank"
+         rel="noopener"
+         download>
+        Download TTL
+      </a>
     </div>
   </header>
 
@@ -152,6 +177,10 @@
       <h2>Welcome</h2>
       <p>Select a concept on the left to see its details (label, definition, URI, and broader/narrower relations).</p>
       <p>This browser reads the <code>hi-thesaurus.ttl</code> file directly from the GitHub repository and builds a clickable SKOS hierarchy in the browser.</p>
+      <p>
+        You can also deep-link to a concept with a fragment, e.g.
+        <code>#Agent</code> or <code>#https://w3id.org/hi-thesaurus/Agent</code>.
+      </p>
     </section>
   </main>
 
@@ -159,7 +188,6 @@
     (function() {
       // Raw GitHub URL for your TTL file
       const ttlUrl = "https://raw.githubusercontent.com/kai-vu/Hybrid-Intelligence-Thesaurus/main/hi-thesaurus.ttl";
-      // If the file is at a different path or branch, update the URL above.
 
       const SKOS = "http://www.w3.org/2004/02/skos/core#";
       const RDF  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -168,8 +196,8 @@
       const treeContent = document.getElementById("tree-content");
       const detailsEl = document.getElementById("details");
 
-      const concepts = {}; // iri -> { iri, labels: [], defs: [], broader: [], narrower: [], isConcept: bool }
-      const conceptNodes = {}; // iri -> span in tree
+      const concepts = {};   // iri -> { iri, labels: [], defs: [], broader: [], narrower: [], isConcept: bool }
+      const iriToElement = {}; // iri -> <span.concept-node>
       let activeNodeEl = null;
 
       function ensureConcept(iri) {
@@ -189,33 +217,37 @@
       function iriToLabel(iri) {
         const c = concepts[iri];
         if (!c) return iri;
-        return c.labels[0] || iri.split("#").slice(-1)[0] || iri;
+        return c.labels[0] || iri.split(/[\/#]/).slice(-1)[0] || iri;
       }
 
-      function showConcept(iri) {
-        const concept = concepts[iri];
-        if (!concept) return;
+      function selectConceptByIri(iri, fromHash = false) {
+        const el = iriToElement[iri];
+        const c = concepts[iri];
+        if (!el || !c) return;
 
-        // highlight in tree if present
-        if (activeNodeEl) {
-          activeNodeEl.classList.remove("active");
-        }
-        const node = conceptNodes[iri];
-        if (node) {
-          node.classList.add("active");
-          activeNodeEl = node;
-        } else {
-          activeNodeEl = null;
+        if (activeNodeEl) activeNodeEl.classList.remove("active");
+        el.classList.add("active");
+        activeNodeEl = el;
+
+        if (!fromHash) {
+          // when user clicks in UI, update hash with local name
+          const local = iri.split(/[\/#]/).slice(-1)[0];
+          if (local) {
+            history.replaceState(null, "", "#" + encodeURIComponent(local));
+          }
         }
 
-        renderDetails(concept);
+        renderDetails(c);
+
+        // ensure visible in tree
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
       }
 
       function renderDetails(concept) {
         detailsEl.innerHTML = "";
 
         const h2 = document.createElement("h2");
-        h2.textContent = concept.labels[0] || concept.iri;
+        h2.textContent = concept.labels[0] || iriToLabel(concept.iri);
         detailsEl.appendChild(h2);
 
         const iriP = document.createElement("p");
@@ -231,57 +263,54 @@
         }
 
         if (concept.broader.length > 0 || concept.narrower.length > 0) {
-          const relDiv = document.createElement("div");
-          relDiv.style.marginTop = "0.75rem";
+          const relWrapper = document.createElement("div");
+          relWrapper.style.marginTop = "0.75rem";
 
           if (concept.broader.length > 0) {
-            const b = document.createElement("div");
-
+            const row = document.createElement("div");
+            row.className = "rel-row";
             const badge = document.createElement("span");
             badge.className = "badge";
             badge.textContent = "broader";
-            b.appendChild(badge);
+            row.appendChild(badge);
 
-            concept.broader.forEach(iri => {
-              const link = document.createElement("a");
-              link.href = "#";
-              link.className = "concept-link";
-              link.textContent = iriToLabel(iri);
-              link.addEventListener("click", (e) => {
-                e.preventDefault();
-                showConcept(iri);
-              });
-              b.appendChild(link);
+            concept.broader.forEach((iri, idx) => {
+              if (idx > 0) row.appendChild(document.createTextNode(", "));
+              row.appendChild(createConceptLink(iri));
             });
 
-            relDiv.appendChild(b);
+            relWrapper.appendChild(row);
           }
 
           if (concept.narrower.length > 0) {
-            const n = document.createElement("div");
-
+            const row = document.createElement("div");
+            row.className = "rel-row";
             const badge = document.createElement("span");
             badge.className = "badge";
             badge.textContent = "narrower";
-            n.appendChild(badge);
+            row.appendChild(badge);
 
-            concept.narrower.forEach(iri => {
-              const link = document.createElement("a");
-              link.href = "#";
-              link.className = "concept-link";
-              link.textContent = iriToLabel(iri);
-              link.addEventListener("click", (e) => {
-                e.preventDefault();
-                showConcept(iri);
-              });
-              n.appendChild(link);
+            concept.narrower.forEach((iri, idx) => {
+              if (idx > 0) row.appendChild(document.createTextNode(", "));
+              row.appendChild(createConceptLink(iri));
             });
 
-            relDiv.appendChild(n);
+            relWrapper.appendChild(row);
           }
 
-          detailsEl.appendChild(relDiv);
+          detailsEl.appendChild(relWrapper);
         }
+      }
+
+      function createConceptLink(iri) {
+        const span = document.createElement("span");
+        span.className = "rel-link";
+        span.textContent = iriToLabel(iri);
+        span.title = iri;
+        span.addEventListener("click", () => {
+          selectConceptByIri(iri);
+        });
+        return span;
       }
 
       function renderNode(concept) {
@@ -289,13 +318,12 @@
 
         const span = document.createElement("span");
         span.className = "concept-node";
-        span.textContent = concept.labels[0] || concept.iri.split("#").slice(-1)[0];
-
-        // store reference for highlighting from details pane
-        conceptNodes[concept.iri] = span;
+        span.textContent = concept.labels[0] || iriToLabel(concept.iri);
+        span.dataset.iri = concept.iri;
+        iriToElement[concept.iri] = span;
 
         span.addEventListener("click", () => {
-          showConcept(concept.iri);
+          selectConceptByIri(concept.iri);
         });
 
         li.appendChild(span);
@@ -335,6 +363,9 @@
         treeContent.appendChild(container);
         treeStatus.style.display = "none";
         treeContent.style.display = "block";
+
+        // After tree is rendered, apply URL fragment selection if present
+        applyHashSelection();
       }
 
       function parseTTL(ttlText) {
@@ -395,6 +426,30 @@
           }
         });
       }
+
+      function applyHashSelection() {
+        if (!window.location.hash) return;
+        const raw = decodeURIComponent(window.location.hash.substring(1));
+        if (!raw) return;
+
+        // First, try full IRI match
+        if (concepts[raw]) {
+          selectConceptByIri(raw, true);
+          return;
+        }
+
+        // Then, try local name match: ending with #local or /local
+        const iri = Object.keys(concepts).find(i =>
+          i.endsWith("#" + raw) || i.endsWith("/" + raw)
+        );
+
+        if (iri) {
+          selectConceptByIri(iri, true);
+        }
+      }
+
+      // React to manual hash changes as well
+      window.addEventListener("hashchange", applyHashSelection);
 
       // Fetch + render
       fetch(ttlUrl)
