@@ -42,10 +42,7 @@ hint:HIScheme a skos:ConceptScheme ;
     dcterms:created "2025-11-15"^^xsd:date ;
     vann:preferredNamespacePrefix "hint";
     vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" ;
-    skos:prefLabel "Hybrid INtelligence Thesaurus"@en ;
-    skos:hasTopConcept ct:Sensing ,
-                       ct:Reasoning ,
-                       ct:Explaining .
+    skos:prefLabel "Hybrid INtelligence Thesaurus"@en .
 
 _:org a schema:Organization ;
     schema:name "Knowledge in AI (KAI) Group - Vrije Universiteit Amsterdam" .
