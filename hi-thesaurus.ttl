@@ -10,8 +10,8 @@
 
 
 hint:HIScheme a skos:ConceptScheme ;
-    dct:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
-    dct:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
+    dc:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
+    dc:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
     dc:creator "to be added" ;
     # [
     #     a foaf:Person ;
@@ -38,7 +38,7 @@ hint:HIScheme a skos:ConceptScheme ;
     #         schema:value "0000-0001-7116-9338" ;
     #         foaf:member _:org  
     #     ]] ;
-    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dc:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:created "2025-11-15"^^xsd:date ;
     vann:preferredNamespacePrefix "hint";
     vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" ;
