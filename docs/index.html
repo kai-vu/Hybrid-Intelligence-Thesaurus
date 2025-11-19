@@ -133,26 +133,26 @@
       color: #b91c1c;
     }
     .copy-row {
-      margin-top: 0.35rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      margin-bottom: 0.5rem;
     }
-    .copy-button {
-      padding: 0.1rem 0.6rem;
-      border-radius: 999px;
+    .copy-btn {
       border: 1px solid #d1d5db;
-      background: #f9fafb;
+      border-radius: 999px;
+      padding: 0.1rem 0.6rem;
       font-size: 0.75rem;
+      background: #f3f4f6;
       cursor: pointer;
     }
-    .copy-button:hover {
+    .copy-btn:hover {
       background: #e5e7eb;
     }
-    .copy-status {
-      color: #16a34a;
-      font-size: 0.75rem;
+    .copy-btn.copied {
+      background: #bbf7d0;
+      border-color: #22c55e;
     }
     @media (max-width: 800px) {
       body {
@@ -197,11 +197,18 @@
     </aside>
     <section id="details">
       <h2>Welcome</h2>
-      <p>Select a concept on the left to see its details (label, definition, URI, and broader/narrower relations).</p>
-      <p>This browser reads the <code>hi-thesaurus.ttl</code> file directly from the GitHub repository and builds a clickable SKOS hierarchy in the browser.</p>
       <p>
-        Deep links use a URL fragment, e.g.
-        <code>#HumanAgent</code> → <code>…/Hybrid-Intelligence-Thesaurus#HumanAgent</code>.
+        Select a concept on the left to see its details (label, definition, URI, and broader/narrower relations).
+      </p>
+      <p>
+        This browser reads the <code>hi-thesaurus.ttl</code> file directly from the GitHub repository and builds
+        a clickable SKOS hierarchy in the browser.
+      </p>
+      <p>
+        Public IRIs are of the form:
+        <code>https://w3id.org/hi-thesaurus/HumanAgent</code>.
+        Deep links to the browser use fragments, e.g.
+        <code>#HumanAgent</code>.
       </p>
     </section>
   </main>
@@ -254,18 +261,37 @@
         if (!fromHash) {
           const local = iri.split(/[\/#]/).slice(-1)[0];
           if (local) {
-            // base path without trailing slash: /Hybrid-Intelligence-Thesaurus
-            const basePath = window.location.pathname.replace(/\/$/, "");
-            history.replaceState(
-              null,
-              "",
-              basePath + "#" + encodeURIComponent(local)
-            );
+            const base = window.location.origin + window.location.pathname.replace(/\/+$/, "");
+            history.replaceState(null, "", base + "#" + encodeURIComponent(local));
           }
         }
 
         renderDetails(c);
         el.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+
+      function copyToClipboard(text, button) {
+        if (!navigator.clipboard) {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.appendChild(textarea);
+          textarea.select();
+          try { document.execCommand("copy"); } catch (e) {}
+          document.body.removeChild(textarea);
+        } else {
+          navigator.clipboard.writeText(text).catch(() => {});
+        }
+        if (button) {
+          button.classList.add("copied");
+          const original = button.textContent;
+          button.textContent = "Copied";
+          setTimeout(() => {
+            button.classList.remove("copied");
+            button.textContent = original;
+          }, 1200);
+        }
       }
 
       function renderDetails(concept) {
@@ -275,45 +301,24 @@
         h2.textContent = concept.labels[0] || iriToLabel(concept.iri);
         detailsEl.appendChild(h2);
 
-        const iriP = document.createElement("p");
-        iriP.className = "concept-iri";
-        iriP.textContent = concept.iri;
-        detailsEl.appendChild(iriP);
+        const iriRow = document.createElement("div");
+        iriRow.className = "copy-row";
 
-        // Copy link row
-        const copyRow = document.createElement("div");
-        copyRow.className = "copy-row";
+        const iriSpan = document.createElement("span");
+        iriSpan.className = "concept-iri";
+        iriSpan.textContent = concept.iri;
+        iriRow.appendChild(iriSpan);
 
         const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
         copyBtn.type = "button";
-        copyBtn.className = "copy-button";
-        copyBtn.textContent = "Copy link";
-
-        const statusSpan = document.createElement("span");
-        statusSpan.className = "copy-status";
-
+        copyBtn.textContent = "Copy IRI";
         copyBtn.addEventListener("click", () => {
-          const local = concept.iri.split(/[\/#]/).slice(-1)[0];
-          const basePath = window.location.pathname.replace(/\/$/, "");
-          const url = window.location.origin + basePath + "#" + encodeURIComponent(local);
-
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(url).then(() => {
-              statusSpan.textContent = "Copied!";
-              setTimeout(() => { statusSpan.textContent = ""; }, 1500);
-            }).catch(() => {
-              statusSpan.textContent = "Could not copy";
-              setTimeout(() => { statusSpan.textContent = ""; }, 1500);
-            });
-          } else {
-            // Fallback: prompt
-            window.prompt("Copy this link:", url);
-          }
+          copyToClipboard(concept.iri, copyBtn);
         });
+        iriRow.appendChild(copyBtn);
 
-        copyRow.appendChild(copyBtn);
-        copyRow.appendChild(statusSpan);
-        detailsEl.appendChild(copyRow);
+        detailsEl.appendChild(iriRow);
 
         if (concept.defs.length > 0) {
           const defDiv = document.createElement("div");
@@ -424,7 +429,6 @@
         treeStatus.style.display = "none";
         treeContent.style.display = "block";
 
-        // After tree is rendered, apply URL fragment selection if present
         applyHashSelection();
       }
 
@@ -451,25 +455,21 @@
           const p = q.predicate.value;
           const o = q.object;
 
-          // type
           if (p === RDF + "type" && o.value === SKOS + "Concept") {
             const c = ensureConcept(s);
             c.isConcept = true;
           }
 
-          // prefLabel
           if (p === SKOS + "prefLabel" && o.termType === "Literal") {
             const c = ensureConcept(s);
             c.labels.push(o.value);
           }
 
-          // definition
           if (p === SKOS + "definition" && o.termType === "Literal") {
             const c = ensureConcept(s);
             c.defs.push(o.value);
           }
 
-          // broader
           if (p === SKOS + "broader" && o.termType === "NamedNode") {
             const c = ensureConcept(s);
             const parent = ensureConcept(o.value);
@@ -477,7 +477,6 @@
             if (!parent.narrower.includes(s)) parent.narrower.push(s);
           }
 
-          // narrower (optional)
           if (p === SKOS + "narrower" && o.termType === "NamedNode") {
             const c = ensureConcept(s);
             const child = ensureConcept(o.value);
@@ -492,15 +491,13 @@
         const raw = decodeURIComponent(window.location.hash.substring(1));
         if (!raw) return;
 
-        // First, try full IRI match
         if (concepts[raw]) {
           selectConceptByIri(raw, true);
           return;
         }
 
-        // Then, try local name match: ending with #local or /local
         const iri = Object.keys(concepts).find(i =>
-          i.endsWith("/" + raw) || i.endsWith("#" + raw)
+          i.endsWith("#" + raw) || i.endsWith("/" + raw)
         );
 
         if (iri) {
@@ -508,10 +505,8 @@
         }
       }
 
-      // React to manual hash changes as well
       window.addEventListener("hashchange", applyHashSelection);
 
-      // Fetch + render
       fetch(ttlUrl)
         .then(resp => {
           if (!resp.ok) {
