@@ -132,6 +132,33 @@
     .error {
       color: #b91c1c;
     }
+
+    /* Copy link row */
+    .copy-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.15rem 0 0.4rem 0;
+      flex-wrap: wrap;
+    }
+    .copy-button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: #2563eb;
+      color: #f9fafb;
+    }
+    .copy-button:hover {
+      background: #1d4ed8;
+    }
+    .copy-status {
+      font-size: 0.75rem;
+      color: #10b981;
+      transition: opacity 0.15s ease-out;
+    }
+
     @media (max-width: 800px) {
       body {
         flex-direction: column;
@@ -238,7 +265,6 @@
           // When user clicks in UI, update URL path with local name (no hash)
           const local = iri.split(/[\/#]/).slice(-1)[0];
           if (local) {
-            // basePath = current path's directory (strip last segment, if any)
             const basePath = window.location.pathname.replace(/[^\/]*$/, "");
             history.replaceState(null, "", basePath + encodeURIComponent(local));
           }
@@ -257,10 +283,46 @@
         h2.textContent = concept.labels[0] || iriToLabel(concept.iri);
         detailsEl.appendChild(h2);
 
-        const iriP = document.createElement("p");
-        iriP.className = "concept-iri";
-        iriP.textContent = concept.iri;
-        detailsEl.appendChild(iriP);
+        // Copy link row (IRI + button + status)
+        const copyRow = document.createElement("div");
+        copyRow.className = "copy-row";
+
+        const iriSpan = document.createElement("span");
+        iriSpan.className = "concept-iri";
+        iriSpan.textContent = concept.iri;
+
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-button";
+        copyBtn.type = "button";
+        copyBtn.textContent = "Copy link";
+
+        const statusSpan = document.createElement("span");
+        statusSpan.className = "copy-status";
+        statusSpan.style.opacity = "0";
+
+        copyBtn.addEventListener("click", () => {
+          const textToCopy = concept.iri; // canonical w3id IRI
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy)
+              .then(() => {
+                statusSpan.textContent = "Copied!";
+                statusSpan.style.opacity = "1";
+                setTimeout(() => {
+                  statusSpan.style.opacity = "0";
+                }, 1500);
+              })
+              .catch(() => {
+                window.prompt("Copy this link:", textToCopy);
+              });
+          } else {
+            window.prompt("Copy this link:", textToCopy);
+          }
+        });
+
+        copyRow.appendChild(iriSpan);
+        copyRow.appendChild(copyBtn);
+        copyRow.appendChild(statusSpan);
+        detailsEl.appendChild(copyRow);
 
         if (concept.defs.length > 0) {
           const defDiv = document.createElement("div");
@@ -440,7 +502,6 @@
 
         const last = decodeURIComponent(segments[segments.length - 1]);
 
-        // Check if this last segment corresponds to any concept local name
         const hasMatchingConcept = Object.keys(concepts).some(i =>
           i.endsWith("/" + last) || i.endsWith("#" + last)
         );
@@ -461,7 +522,6 @@
 
         if (!local) return;
 
-        // Try to find concept whose IRI ends with /local or #local
         const iri = Object.keys(concepts).find(i =>
           i.endsWith("/" + local) || i.endsWith("#" + local)
         );
