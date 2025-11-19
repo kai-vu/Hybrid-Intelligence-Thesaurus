@@ -1,5 +1,6 @@
 @prefix hi:         <https://w3id.org/hi-ontology#> .
 @prefix dc:         <http://purl.org/dc/elements/1.1/> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 @prefix foaf:       <http://xmlns.com/foaf/0.1/> .
 @prefix hint:       <https://w3id.org/hi-thesaurus#> .
 @prefix vann:       <http://purl.org/vocab/vann/> .
