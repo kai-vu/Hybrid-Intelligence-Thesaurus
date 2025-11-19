@@ -13,31 +13,6 @@ hint:HIScheme a skos:ConceptScheme ;
     dc:title "Hybrid INtelligence Thesaurus (HINT)"@en ;
     dc:description "A controlled thesaurus of terms to describe Hybrid Intelligence (HI)."@en ;
     dc:creator "to be added" ;
-    # [
-    #     a foaf:Person ;
-    #     foaf:name "Francesca Urgese" ;
-    #     schema:identifier [
-    #         a schema:PropertyValue ;
-    #         schema:propertyID "ORCID" ;
-    #         schema:value "0009-0009-0516-1800";
-    #         foaf:member _:org  
-    #     ]], [
-    #     a foaf:Person ;
-    #     foaf:name "Margherita Martorana" ;
-    #     schema:identifier [
-    #         a schema:PropertyValue ;
-    #         schema:propertyID "ORCID" ;
-    #         schema:value "0000-0001-8004-0464" ;
-    #         foaf:member _:org  
-    #     ]] , [
-    #     a foaf:Person ;
-    #     foaf:name "Ilaria Tiddi" ;
-    #     schema:identifier [
-    #         a schema:PropertyValue ;
-    #         schema:propertyID "ORCID" ;
-    #         schema:value "0000-0001-7116-9338" ;
-    #         foaf:member _:org  
-    #     ]] ;
     dc:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:created "2025-11-15"^^xsd:date ;
     vann:preferredNamespacePrefix "hint";
@@ -1058,9 +1033,6 @@ hint:Interaction a skos:Concept ;
     skos:definition "The process of communication or engagement between agents within a Hybrid Intelligence system."@en ;
     skos:exactMatch hi:Interaction .
 	
-	
-
-
 # Interaction Intent
 ############################################################
 
@@ -1100,7 +1072,6 @@ hint:AnswerIntent a skos:Concept ;
     skos:prefLabel "Answer Intent"@en ;
     skos:definition "An intent centered around answering."@en ;
     skos:broader hint:InteractionIntent .
-
 
 # Interaction Modality
 ############################################################
