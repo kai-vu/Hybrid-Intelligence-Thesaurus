@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hybrid INtelligence Thesaurus (HINT) Browser</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 0.75rem 1.25rem;
+      background: #111827;
+      color: #e5e7eb;
+      font-size: 0.95rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    main {
+      margin-top: 3rem;
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    #tree {
+      width: 35%;
+      max-width: 480px;
+      min-width: 260px;
+      border-right: 1px solid #e5e7eb;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #f9fafb;
+    }
+    #details {
+      flex: 1;
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+    }
+    h1 {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 0;
+    }
+    ul.tree {
+      list-style: none;
+      padding-left: 0.5rem;
+      margin: 0;
+    }
+    ul.tree ul {
+      margin-left: 1rem;
+      border-left: 1px dashed #d1d5db;
+      padding-left: 0.75rem;
+    }
+    .concept-node {
+      cursor: pointer;
+      padding: 0.1rem 0.25rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .concept-node:hover {
+      background: #e5e7eb;
+    }
+    .concept-node.active {
+      background: #2563eb;
+      color: white;
+    }
+    .concept-iri {
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #6b7280;
+      word-break: break-all;
+    }
+    .definition {
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: #e5e7eb;
+      color: #374151;
+      margin-right: 0.25rem;
+    }
+    .loading, .error {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    .error {
+      color: #b91c1c;
+    }
+    @media (max-width: 800px) {
+      body {
+        flex-direction: column;
+      }
+      main {
+        flex-direction: column;
+      }
+      #tree {
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+        max-height: 40vh;
+      }
+    }
+  </style>
+  <script src="https://unpkg.com/n3@1.17.3/browser/n3.min.js"></script>
+</head>
+<body>
+  <header>
+    <div>
+      <strong>Hybrid INtelligence Thesaurus (HINT)</strong>
+    </div>
+    <div>
+      <a href="https://w3id.org/hi-thesaurus#" target="_blank" rel="noopener">Thesaurus URI</a>
+    </div>
+  </header>
+
+  <main>
+    <aside id="tree">
+      <div id="tree-status" class="loading">Loading thesaurus from TTL…</div>
+      <div id="tree-content" style="display:none;"></div>
+    </aside>
+    <section id="details">
+      <h2>Welcome</h2>
+      <p>Select a concept on the left to see its details (label, definition, URI, and broader/narrower relations).</p>
+      <p>This browser reads the <code>hi-thesaurus.ttl</code> file directly from the GitHub repository and builds a clickable SKOS hierarchy in the browser.</p>
+    </section>
+  </main>
+
+  <script>
+    (function() {
+      // Raw GitHub URL for your TTL file
+      const ttlUrl = "https://raw.githubusercontent.com/kai-vu/Hybrid-Intelligence-Thesaurus/main/hi-thesaurus.ttl";
+      // If the file is at a different path or branch, update the URL above.
+
+      const SKOS = "http://www.w3.org/2004/02/skos/core#";
+      const RDF  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
+      const treeStatus = document.getElementById("tree-status");
+      const treeContent = document.getElementById("tree-content");
+      const detailsEl = document.getElementById("details");
+
+      const concepts = {}; // iri -> { iri, labels: [], defs: [], broader: [], narrower: [], isConcept: bool }
+      let activeNodeEl = null;
+
+      function ensureConcept(iri) {
+        if (!concepts[iri]) {
+          concepts[iri] = {
+            iri,
+            labels: [],
+            defs: [],
+            broader: [],
+            narrower: [],
+            isConcept: false
+          };
+        }
+        return concepts[iri];
+      }
+
+      function iriToLabel(iri) {
+        const c = concepts[iri];
+        if (!c) return iri;
+        return c.labels[0] || iri.split("#").slice(-1)[0] || iri;
+      }
+
+      function renderDetails(concept) {
+        detailsEl.innerHTML = "";
+
+        const h2 = document.createElement("h2");
+        h2.textContent = concept.labels[0] || concept.iri;
+        detailsEl.appendChild(h2);
+
+        const iriP = document.createElement("p");
+        iriP.className = "concept-iri";
+        iriP.textContent = concept.iri;
+        detailsEl.appendChild(iriP);
+
+        if (concept.defs.length > 0) {
+          const defDiv = document.createElement("div");
+          defDiv.className = "definition";
+          defDiv.textContent = concept.defs[0];
+          detailsEl.appendChild(defDiv);
+        }
+
+        if (concept.broader.length > 0 || concept.narrower.length > 0) {
+          const relDiv = document.createElement("div");
+          relDiv.style.marginTop = "0.75rem";
+
+          if (concept.broader.length > 0) {
+            const b = document.createElement("div");
+            b.innerHTML = "<span class='badge'>broader</span>" +
+              concept.broader.map(iriToLabel).join(", ");
+            relDiv.appendChild(b);
+          }
+
+          if (concept.narrower.length > 0) {
+            const n = document.createElement("div");
+            n.innerHTML = "<span class='badge'>narrower</span>" +
+              concept.narrower.map(iriToLabel).join(", ");
+            relDiv.appendChild(n);
+          }
+
+          detailsEl.appendChild(relDiv);
+        }
+      }
+
+      function renderNode(concept) {
+        const li = document.createElement("li");
+
+        const span = document.createElement("span");
+        span.className = "concept-node";
+        span.textContent = concept.labels[0] || concept.iri.split("#").slice(-1)[0];
+
+        span.addEventListener("click", () => {
+          if (activeNodeEl) activeNodeEl.classList.remove("active");
+          span.classList.add("active");
+          activeNodeEl = span;
+          renderDetails(concept);
+        });
+
+        li.appendChild(span);
+
+        const children = concept.narrower
+          .map(iri => concepts[iri])
+          .filter(Boolean)
+          .sort((a, b) => (a.labels[0] || a.iri).localeCompare(b.labels[0] || b.iri));
+
+        if (children.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "tree";
+          children.forEach(child => {
+            ul.appendChild(renderNode(child));
+          });
+          li.appendChild(ul);
+        }
+
+        return li;
+      }
+
+      function renderTree() {
+        const roots = Object.values(concepts)
+          .filter(c => c.isConcept && c.broader.length === 0)
+          .sort((a, b) => (a.labels[0] || a.iri).localeCompare(b.labels[0] || b.iri));
+
+        const container = document.createElement("div");
+        const list = document.createElement("ul");
+        list.className = "tree";
+
+        roots.forEach(root => {
+          list.appendChild(renderNode(root));
+        });
+
+        container.appendChild(list);
+        treeContent.innerHTML = "";
+        treeContent.appendChild(container);
+        treeStatus.style.display = "none";
+        treeContent.style.display = "block";
+      }
+
+      function parseTTL(ttlText) {
+        return new Promise((resolve, reject) => {
+          const parser = new N3.Parser();
+          const quads = [];
+          parser.parse(ttlText,
+            (error, quad) => {
+              if (error) return reject(error);
+              if (quad) {
+                quads.push(quad);
+              } else {
+                resolve(quads);
+              }
+            }
+          );
+        });
+      }
+
+      function buildModel(quads) {
+        quads.forEach(q => {
+          const s = q.subject.value;
+          const p = q.predicate.value;
+          const o = q.object;
+
+          // type
+          if (p === RDF + "type" && o.value === SKOS + "Concept") {
+            const c = ensureConcept(s);
+            c.isConcept = true;
+          }
+
+          // prefLabel
+          if (p === SKOS + "prefLabel" && o.termType === "Literal") {
+            const c = ensureConcept(s);
+            c.labels.push(o.value);
+          }
+
+          // definition
+          if (p === SKOS + "definition" && o.termType === "Literal") {
+            const c = ensureConcept(s);
+            c.defs.push(o.value);
+          }
+
+          // broader
+          if (p === SKOS + "broader" && o.termType === "NamedNode") {
+            const c = ensureConcept(s);
+            const parent = ensureConcept(o.value);
+            if (!c.broader.includes(o.value)) c.broader.push(o.value);
+            if (!parent.narrower.includes(s)) parent.narrower.push(s);
+          }
+
+          // narrower (optional)
+          if (p === SKOS + "narrower" && o.termType === "NamedNode") {
+            const c = ensureConcept(s);
+            const child = ensureConcept(o.value);
+            if (!c.narrower.includes(o.value)) c.narrower.push(o.value);
+            if (!child.broader.includes(s)) child.broader.push(s);
+          }
+        });
+      }
+
+      // Fetch + render
+      fetch(ttlUrl)
+        .then(resp => {
+          if (!resp.ok) {
+            throw new Error("Failed to fetch TTL: " + resp.status + " " + resp.statusText);
+          }
+          return resp.text();
+        })
+        .then(parseTTL)
+        .then(quads => {
+          buildModel(quads);
+          renderTree();
+        })
+        .catch(err => {
+          console.error(err);
+          treeStatus.className = "error";
+          treeStatus.textContent = "Error loading thesaurus: " + err.message;
+        });
+
+    })();
+  </script>
+</body>
+</html>
