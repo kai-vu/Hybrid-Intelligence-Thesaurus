@@ -42,9 +42,24 @@ hint:HIScheme a skos:ConceptScheme ;
     vann:preferredNamespacePrefix "hint";
     vann:preferredNamespaceUri "https://w3id.org/hi-thesaurus#" ;
     skos:prefLabel "Hybrid INtelligence Thesaurus"@en ;
-    skos:hasTopConcept ct:Sensing ,
-                       ct:Reasoning ,
-                       ct:Explaining .
+    skos:hasTopConcept hint:UseCase ,
+                        hint:Domain ,
+                        hint:Goal ,
+                        hint:Context ,
+                        hint:Constraint ,
+                        hint:Role ,
+                        hint:Agent ,
+                        hint:Capability ,
+                        hint:Task ,
+                        hint:Method ,
+                        hint:TaskExecution ,
+                        hint:Interaction ,
+                        hint:Phenomenon ,
+                        hint:Bias ,
+                        hint:Feedback ,
+                        hint:Experiment ,
+                        hint:Evaluation ,
+                        hint:Metric .
 
 _:org a schema:Organization ;
     schema:name "Knowledge in AI (KAI) Group - Vrije Universiteit Amsterdam" .
@@ -111,8 +126,7 @@ hint:VirtualMuseumGuideUseCase a skos:Concept ;
 hint:Domain a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Domain"@en ;
-    skos:definition "A specific field or area of application where Hybrid Intelligence systems are utilized."@en ;
-    skos:exactMatch hi:Domain .
+    skos:definition "A specific field or area of application where Hybrid Intelligence systems are utilized."@en .
 
 hint:HealthAndLifestyleDomain a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -272,7 +286,6 @@ hint:Constraint a skos:Concept ;
     skos:prefLabel "Constraint"@en ;
     skos:definition "A limitation or restriction that influences the operation of a Hybrid Intelligence system."@en .
 
-
 # Ethical constraint
 ############################################################
 
@@ -345,8 +358,7 @@ hint:AccessibilityConstraint a skos:Concept ;
 hint:Role a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Role"@en ;
-    skos:definition "A specific function or position that an agent assumes within a Hybrid Intelligence system."@en ;
-    skos:exactMatch hi:Role .
+    skos:definition "A specific function or position that an agent assumes within a Hybrid Intelligence system."@en .
 
 hint:AIAssistantRole a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -807,8 +819,7 @@ hint:QuestionAnsweringTask a skos:Concept ;
 hint:Method a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Method"@en ;
-    skos:definition "A specific approach or technique used by a Hybrid Intelligence system to perform tasks."@en ;
-    skos:exactMatch hi:Method .
+    skos:definition "A specific approach or technique used by a Hybrid Intelligence system to perform tasks."@en .
 
 hint:ArgumentationReasoningMethod a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -1060,9 +1071,6 @@ hint:Interaction a skos:Concept ;
     skos:definition "The process of communication or engagement between agents within a Hybrid Intelligence system."@en ;
     skos:exactMatch hi:Interaction .
 	
-	
-
-
 # Interaction Intent
 ############################################################
 
@@ -1158,8 +1166,7 @@ hint:VoiceChatModality a skos:Concept ;
 hint:Phenomenon a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Phenomenon"@en ;
-    skos:definition "An observable event or occurrence within the context of Hybrid Intelligence systems."@en ;
-    skos:exactMatch hi:Phenomenon .
+    skos:definition "An observable event or occurrence within the context of Hybrid Intelligence systems."@en .
 
 hint:SensorNoisePhenomenon a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -1235,8 +1242,7 @@ hint:EngagementShiftPhenomenon a skos:Concept ;
 hint:Bias a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Bias"@en ;
-    skos:definition "A systematic deviation or prejudice that affects the performance or behavior of Hybrid Intelligence systems."@en ;
-    skos:broader hint:Phenomenon.
+    skos:definition "A systematic deviation or prejudice that affects the performance or behavior of Hybrid Intelligence systems."@en .
 
 hint:ConfirmationBias a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -1252,8 +1258,7 @@ hint:ConfirmationBias a skos:Concept ;
 hint:Feedback a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Feedback"@en ;
-    skos:definition "Information provided by users or systems that reflects their experiences or evaluations of Hybrid Intelligence systems."@en ;
-    skos:broader hint:Phenomenon .
+    skos:definition "Information provided by users or systems that reflects their experiences or evaluations of Hybrid Intelligence systems."@en .
 
 hint:TrustReportFeedback a skos:Concept ;
     skos:inScheme hint:HIScheme ;
@@ -1439,7 +1444,6 @@ hint:RLExplanationClarityEvaluation a skos:Concept ;
 	skos:definition "Evaluation of explanation quality during reinforcement-learning-based actions."@en ;
 	skos:broader hint:Evaluation .
 	 
-
 hint:FineManipulationEvaluation a skos:Concept ;
 	skos:inScheme hint:HIScheme ;
 	skos:broader hint:Evaluation ;
@@ -1460,8 +1464,7 @@ hint:KGQueryAccuracyEvaluation a skos:Concept ;
 hint:Metric a skos:Concept ;
     skos:inScheme hint:HIScheme ;
     skos:prefLabel "Metric"@en ;
-    skos:definition "A quantitative measure used to evaluate specific aspects of Hybrid Intelligence systems."@en ;
-    skos:exactMatch hi:Metric .
+    skos:definition "A quantitative measure used to evaluate specific aspects of Hybrid Intelligence systems."@en .
 
 hint:TrustPreservationMetric a skos:Concept ;
     skos:inScheme hint:HIScheme ;
